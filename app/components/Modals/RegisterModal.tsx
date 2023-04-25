@@ -9,6 +9,7 @@ import useRegisterModal from "@/app/hooks/useRegisterModal";
 import Modal from "./Modal";
 import Heading from "../Heading/Heading";
 import Input from "../Inputs/Input";
+import { toast } from "react-hot-toast";
 
 const RegisterModal = () => {
   const { isOpen, onClose, onOpen } = useRegisterModal();
@@ -25,7 +26,7 @@ const RegisterModal = () => {
     axios
       .post("/api/register", data)
       .then(() => onClose())
-      .catch(console.log)
+      .catch(() => toast.error("Something went wrong."))
       .finally(() => setIsLoading(false));
   };
 
