@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar/Navbar";
 import ClientOnly from "./components/ClientOnly.tsx/ClientOnly";
 import RegisterModal from "./components/Modals/RegisterModal";
 import ToasterProvider from "./providers/ToasterProvider";
+import LoginModal from "./components/Modals/LoginModal";
 
 export const metadata = {
   title: "Airbnb",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClientOnly>
           <ToasterProvider />
           <RegisterModal />
+          <LoginModal />
           <Navbar />
         </ClientOnly>
         {children}

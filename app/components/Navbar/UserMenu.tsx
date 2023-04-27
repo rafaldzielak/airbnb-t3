@@ -1,5 +1,6 @@
 "use client";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
 import React, { useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar/Avatar";
@@ -10,7 +11,8 @@ const UserMenu = () => {
 
   const toggleOpen = () => setIsOpen((prev) => !prev);
 
-  const { onOpen } = useRegisterModal();
+  const { onOpen: onOpenLoginModal } = useLoginModal();
+  const { onOpen: onOpenRegisterModal } = useRegisterModal();
 
   return (
     <div className='relative'>
@@ -33,8 +35,8 @@ const UserMenu = () => {
         <div className='absolute rounded-xl shadow-md w-[40vw]  md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm'>
           <div className='flex flex-col cursor-pointer'>
             <>
-              <MenuItem onClick={() => {}} label='Login' />
-              <MenuItem onClick={onOpen} label='Sign up' />
+              <MenuItem onClick={onOpenLoginModal} label='Login' />
+              <MenuItem onClick={onOpenRegisterModal} label='Sign up' />
             </>
           </div>
         </div>
