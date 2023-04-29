@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { AiFillGithub } from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useLoginModal from "@/app/hooks/useLoginModal";
-import Modal from "./Modal";
-import Heading from "../Heading/Heading";
-import Input from "../Inputs/Input";
-import { toast } from "react-hot-toast";
-import Button from "../Button/Button";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { AiFillGithub } from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
+import Button from "../Button/Button";
+import Heading from "../Heading/Heading";
+import Input from "../Inputs/Input";
+import Modal from "./Modal";
 
 const LoginModal = () => {
   const { isOpen, onClose } = useLoginModal();
+  const { onOpen: openRegisterModal } = useRegisterModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -38,6 +40,11 @@ const LoginModal = () => {
     });
   };
 
+  const toggle = () => {
+    onClose();
+    openRegisterModal();
+  };
+
   const bodyContent = (
     <div className='flex flex-col gap-4'>
       <Heading title='Welcome back' subtitle='Login to your account!' />
@@ -52,10 +59,10 @@ const LoginModal = () => {
       <Button outline label='Continue with Google' icon={FcGoogle} onClick={() => signIn("google")} />
       <Button outline label='Continue with Github' icon={AiFillGithub} onClick={() => signIn("github")} />
       <div className='text-neutral-500 text-center mt-4 font-light'>
-        <div className='flex flex-row justify-center Zgap-2'>
-          <div>Alread have an account?</div>
-          <div onClick={onClose} className='text-neutral-800 cursor-pointer hover:underline'>
-            Log in
+        <div className='flex flex-row justify-center gap-2'>
+          <div>First time using Airbnb?</div>
+          <div onClick={toggle} className='text-neutral-800 cursor-pointer hover:underline'>
+            Create an account
           </div>
         </div>
       </div>

@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 import axios from "axios";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import { AiFillGithub } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import useRegisterModal from "@/app/hooks/useRegisterModal";
-import Modal from "./Modal";
+import Button from "../Button/Button";
 import Heading from "../Heading/Heading";
 import Input from "../Inputs/Input";
-import { toast } from "react-hot-toast";
-import Button from "../Button/Button";
-import { signIn } from "next-auth/react";
+import Modal from "./Modal";
 
 const RegisterModal = () => {
-  const { isOpen, onClose, onOpen } = useRegisterModal();
+  const { isOpen, onClose } = useRegisterModal();
+  const { onOpen: openLoginModal } = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -32,6 +34,11 @@ const RegisterModal = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const toggle = () => {
+    onClose();
+    openLoginModal();
+  };
+
   const bodyContent = (
     <div className='flex flex-col gap-4'>
       <Heading title='Welcome to Airbnb' subtitle='Create an account!' />
@@ -47,9 +54,9 @@ const RegisterModal = () => {
       <Button outline label='Continue with Google' icon={FcGoogle} onClick={() => signIn("google")} />
       <Button outline label='Continue with Github' icon={AiFillGithub} onClick={() => signIn("github")} />
       <div className='text-neutral-500 text-center mt-4 font-light'>
-        <div className='flex flex-row justify-center Zgap-2'>
+        <div className='flex flex-row justify-center gap-2'>
           <div>Alread have an account?</div>
-          <div onClick={onClose} className='text-neutral-800 cursor-pointer hover:underline'>
+          <div onClick={toggle} className='text-neutral-800 cursor-pointer hover:underline'>
             Log in
           </div>
         </div>
