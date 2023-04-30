@@ -1,0 +1,96 @@
+"use client";
+
+import useRentModal from "@/app/hooks/useRentModal";
+import { useMemo, useState } from "react";
+import { FieldValue, FieldValues, useForm } from "react-hook-form";
+import Heading from "../Heading/Heading";
+import CategoryInput from "../Inputs/CategoryInput";
+import { CATEGORIES } from "../Navbar/Categories";
+import Modal from "./Modal";
+
+type Step = "CATEGORY" | "LOCATION" | "INFO" | "IMAGES" | "DESCRIPTION" | "PRICE";
+
+const steps: Step[] = ["CATEGORY", "LOCATION", "INFO", "IMAGES", "DESCRIPTION", "PRICE"];
+
+const RentModal = () => {
+  const { isOpen, onClose } = useRentModal();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [step, setStep] = useState<Step>("CATEGORY");
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm<FieldValues>({
+    defaultValues: {
+      category: "",
+      location: null,
+      guestCount: 1,
+      roomCount: 1,
+      bathroomCount: 1,
+      imageSrc: "",
+      price: 1,
+      title: "",
+      description: "",
+    },
+  });
+
+  const currentCategory = watch("category");
+
+  const setCustomValue = (id: string, value: any) => {
+    setValue(id, value, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+  };
+
+  const onBack = () => setStep((currentStep) => steps[steps.findIndex((step) => step === currentStep) - 1] || 0);
+
+  const onNext = () => setStep((currentStep) => steps[steps.findIndex((step) => step === currentStep) + 1] || 5);
+
+  let bodyContent = (
+    <div className='flex flex-col gap-8'>
+      <Heading title='Which of these best describes your place' subtitle='Pick a category' />
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto'>
+        {CATEGORIES.map((category) => (
+          <div key={category.label} className='col-span-1'>
+            <CategoryInput
+              onClick={(category) => setCustomValue("category", category)}
+              selected={currentCategory === category.label}
+              label={category.label}
+              icon={category.icon}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const actionLabel = useMemo(() => {
+    if (step === "PRICE") return "Create";
+    return "Next";
+  }, [step]);
+
+  const secondaryActionLabel = useMemo(() => {
+    if (step === "CATEGORY") return undefined;
+    return "Back";
+  }, [step]);
+
+  return (
+    <Modal
+      disabled={isLoading}
+      isOpen={isOpen}
+      title='Airbnb your home'
+      actionLabel={actionLabel}
+      secondaryActionLabel={secondaryActionLabel}
+      secondaryAction={onBack}
+      onClose={onClose}
+      onSubmit={onNext}
+      body={bodyContent}
+      // footer={footerContent}
+    />
+  );
+};
+
+export default RentModal;
