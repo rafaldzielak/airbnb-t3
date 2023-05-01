@@ -1,10 +1,13 @@
 "use client";
 
 import useRentModal from "@/app/hooks/useRentModal";
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { FieldValue, FieldValues, useForm } from "react-hook-form";
 import Heading from "../Heading/Heading";
 import CategoryInput from "../Inputs/CategoryInput";
+import CountrySelect from "../Inputs/CountrySelect";
+
 import { CATEGORIES } from "../Navbar/Categories";
 import Modal from "./Modal";
 
@@ -40,6 +43,9 @@ const RentModal = () => {
   });
 
   const currentCategory = watch("category");
+  const location = watch("location");
+
+  const Map = useMemo(() => dynamic(() => import("../Map/Map"), { ssr: false }), [location]);
 
   const setCustomValue = (id: string, value: any) => {
     setValue(id, value, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
@@ -66,6 +72,15 @@ const RentModal = () => {
       </div>
     </div>
   );
+
+  if (step === "LOCATION")
+    bodyContent = (
+      <div className='flex flex-col gap-8'>
+        <Heading title='Where is your place located?' subtitle='Help guests find you!' />
+        <CountrySelect onChange={(value) => setCustomValue("location", value)} value={location} />
+        <Map center={location?.latlng} />
+      </div>
+    );
 
   const actionLabel = useMemo(() => {
     if (step === "PRICE") return "Create";
