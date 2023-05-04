@@ -10,8 +10,15 @@ import { GiWindmill, GiIsland, GiBoatFishing, GiForestCamp, GiCastle, GiCaveEntr
 import { MdOutlineVilla } from "react-icons/md";
 import CategoryBox from "../CategoryBox/CategoryBox";
 import { usePathname, useSearchParams } from "next/navigation";
+import { IconType } from "react-icons/lib";
 
-export const CATEGORIES = [
+export interface Category {
+  icon: IconType;
+  label: string;
+  description: string;
+}
+
+export const CATEGORIES: Category[] = [
   { label: "Beach", icon: TbBeach, description: "This property is close to the beach!" },
   { label: "Windmills", icon: GiWindmill, description: "This property has windmills!" },
   { label: "Modern", icon: MdOutlineVilla, description: "This property is modern!" },
