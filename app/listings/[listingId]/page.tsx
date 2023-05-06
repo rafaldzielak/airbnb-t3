@@ -1,6 +1,8 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import getReservations from "@/app/actions/getReservations";
 import ClientOnly from "@/app/components/ClientOnly.tsx/ClientOnly";
 import EmptyState from "@/app/components/EmptyState/EmptyState";
+import { SafeReservation } from "@/app/types";
 import React from "react";
 import getListingById from "../../actions/getListingById";
 import ListingClient from "./ListingClient";
@@ -12,6 +14,7 @@ interface Params {
 
 const ListingPage = async ({ params }: { params: Params }) => {
   const listing = await getListingById(params);
+  const reservations = await getReservations({ listingId: params.listingId });
   const currentUser = await getCurrentUser();
 
   if (!listing)
@@ -23,7 +26,7 @@ const ListingPage = async ({ params }: { params: Params }) => {
 
   return (
     <ClientOnly>
-      <ListingClient listing={listing} currentUser={currentUser} />
+      <ListingClient listing={listing} currentUser={currentUser} reservations={reservations} />
     </ClientOnly>
   );
 };
