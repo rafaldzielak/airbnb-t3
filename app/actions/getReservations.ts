@@ -18,12 +18,12 @@ export default async function getReservations({ authorId, listingId, userId }: P
     if (authorId) query.listing = { userId: authorId };
 
     const reservations = await prisma.reservation.findMany({ where: query, include: { Listing: true }, orderBy: { createdAt: "desc" } });
-    const safeReservations = reservations.map((reservation) => ({
+    const safeReservations: SafeReservation[] = reservations.map((reservation) => ({
       ...reservation,
       createdAt: reservation.createdAt.toISOString(),
       startDate: reservation.startDate.toISOString(),
       endDate: reservation.endDate.toISOString(),
-      listing: {
+      Listing: {
         ...reservation.Listing,
         createdAt: reservation.Listing?.createdAt.toISOString(),
       },
