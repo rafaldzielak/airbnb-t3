@@ -1,19 +1,20 @@
 "use client";
 
 import useSearchModal from "@/app/hooks/useSearchModal";
-import { formatISO } from "date-fns";
+import { formatISO, setDate } from "date-fns";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import queryString from "query-string";
 import React, { useCallback, useMemo, useState } from "react";
 import { Range } from "react-date-range";
 import Heading from "../Heading/Heading";
+import Calendar from "../Inputs/Calendar";
 import CountrySelect, { CountrySelectValue } from "../Inputs/CountrySelect";
 import Modal from "./Modal";
 
-type Step = "CATEGORY" | "LOCATION" | "INFO" | "IMAGES" | "DESCRIPTION" | "PRICE";
+type Step = "LOCATION" | "DATE" | "INFO";
 
-const steps: Step[] = ["CATEGORY", "LOCATION", "INFO", "IMAGES", "DESCRIPTION", "PRICE"];
+const steps: Step[] = ["LOCATION", "DATE", "INFO"];
 
 const SearchModal = () => {
   const { isOpen, onClose, onOpen } = useSearchModal();
@@ -36,6 +37,7 @@ const SearchModal = () => {
   const onNext = () => setStep((currentStep) => steps[steps.findIndex((step) => step === currentStep) + 1] || 5);
 
   const onSubmit = useCallback(async () => {
+    console.log("SUBMIT");
     if (step !== "INFO") return onNext();
     let currentQuery = {};
     if (params) currentQuery = queryString.parse(params.toString());
@@ -48,15 +50,8 @@ const SearchModal = () => {
     router.push(url);
   }, [bathroomCount, dateRange, guestCount, location?.value, onClose, params, roomCount, router, step]);
 
-  const actionLabel = () => {
-    if (step === "INFO") return "Search";
-    return "Next";
-  };
-
-  const secondaryActionLabel = () => {
-    if (step === "LOCATION") return undefined;
-    return "Back";
-  };
+  const actionLabel = step === "INFO" ? "Search" : "Next";
+  const secondaryActionLabel = step === "LOCATION" ? undefined : "Back";
 
   let bodyContent = (
     <div className='flex flex-col gap-8'>
@@ -67,7 +62,26 @@ const SearchModal = () => {
     </div>
   );
 
-  return <Modal body={bodyContent} isOpen={isOpen} onSubmit={onOpen} onClose={onClose} title='Filters' actionLabel='Search' />;
+  if (step === "DATE") {
+    bodyContent = (
+      <div className='flex flex-col gap-8'>
+        <Heading title='When do you plan to go?' subtitle='Make sure everyone is free!' />
+        <Calendar value={dateRange} onChange={(value) => setDateRange(value.selection)} />
+      </div>
+    );
+  }
+  return (
+    <Modal
+      body={bodyContent}
+      isOpen={isOpen}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      title='Filters'
+      actionLabel={actionLabel}
+      secondaryAction={step === "LOCATION" ? undefined : onBack}
+      secondaryActionLabel={secondaryActionLabel}
+    />
+  );
 };
 
 export default SearchModal;
